@@ -1,0 +1,9 @@
+{
+    "name": "siddharth/classifai",
+    "autoload": {
+        "psr-4": {
+            "Classifai\\": "v2/"
+        }
+    },
+    "require": {}
+}
