@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500;600&display=swap');
+
+$rajdhani: 'Rajdhani', sans-serif;
+
+.classifai-settings {
+	display: flex;
+	background-color: #fff;
+
+	&__context-key {
+		background-color: #c43939;
+	}
+
+	&__context-key__item {
+		display: block;
+		min-height: 120px;
+		font-family: $rajdhani;
+		text-decoration: none;
+		padding: 1rem;
+		max-width: 170px;
+		outline: 0;
+		border: 0;
+		color: #fff;
+
+		&--active {
+			background-color: #771a1a;
+
+			.classifai-settings__context-key-domain {
+				color: #f33636;
+			}
+		}
+
+		&:hover:not( .classifai-settings__context-key__item--active ) {
+			background-color: #a82c2c;
+		}
+
+		& > * {
+			display: block;
+		}
+
+		&:hover,
+		&:active {
+			color: #fff;
+		}
+	}
+
+	&__context-key-domain {
+		font-size: 1.25rem;
+		font-weight: 600;
+		color: #571010;
+		text-transform: uppercase;
+	}
+
+	&__context-key-label {
+		font-size: 1.75rem;
+		margin-top: 0.65rem;
+		line-height: 2.25rem;
+	}
+
+	&__context-settings {
+		padding: 1rem 1.5rem;
+	}
+
+	&__input-wrapper {
+		max-width: 300px;
+
+		&:nth-child(1) {
+			margin-top: 0;
+		}
+
+		margin-top: 3.5rem;
+
+		label {
+			font-size: 1.25rem;
+		}
+
+		.description {
+			margin: 0;
+			margin-top: 0.5rem;
+			margin-bottom: 1rem;
+			font-size: 0.85rem;
+		}
+	}
+
+	&__multi-select {
+		width: 100%;
+	}
+
+	.select2-selection.select2-selection--multiple {
+		padding: 0;
+	}
+
+	.select2-container--default .select2-selection--multiple .select2-selection__choice {
+		background-color: #fff;
+		font-size: 1rem;
+		padding: 0.5rem;
+		padding-left: 25px;
+		margin-top: 0.5rem;
+		margin-bottom: 0.5rem;
+
+		.select2-selection__choice__remove {
+			top: 50%;
+			left: 0.35rem;
+			transform: translate( 0, -50% );
+			border: 0;
+		}
+	}
+
+	.select2-search.select2-search--inline {
+		position: relative;
+		top: -10px;
+	}
+}
