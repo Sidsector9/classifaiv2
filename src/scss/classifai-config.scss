@@ -13,7 +13,7 @@ $rajdhani: 'Rajdhani', sans-serif;
 	&__context-key__item {
 		display: block;
 		min-height: 120px;
-		font-family: $rajdhani;
+		// font-family: $rajdhani;
 		text-decoration: none;
 		padding: 1rem;
 		max-width: 170px;
@@ -46,7 +46,7 @@ $rajdhani: 'Rajdhani', sans-serif;
 	&__context-key-domain {
 		font-size: 1.25rem;
 		font-weight: 600;
-		color: #571010;
+		color: rgb(0 0 0 / 48%);
 		text-transform: uppercase;
 	}
 
@@ -58,6 +58,8 @@ $rajdhani: 'Rajdhani', sans-serif;
 
 	&__context-settings {
 		padding: 1rem 1.5rem;
+		padding-top: 2rem;
+		padding-left: 2rem;
 	}
 
 	&__input-wrapper {
@@ -75,7 +77,7 @@ $rajdhani: 'Rajdhani', sans-serif;
 
 		.description {
 			margin: 0;
-			margin-top: 0.5rem;
+			margin-top: 0.75rem;
 			margin-bottom: 1rem;
 			font-size: 0.85rem;
 		}

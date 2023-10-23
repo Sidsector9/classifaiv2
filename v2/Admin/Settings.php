@@ -4,6 +4,7 @@ namespace Classifai\Admin;
 
 use \Classifai\Features\FeaturePostTitleGeneration;
 use \Classifai\Features\FeatureExcerptGeneration;
+use \Classifai\Features\FeatureContentResizing;
 
 class Settings {
 	const FEATURE_KEY = 'classifai_feature_config';
@@ -19,9 +20,9 @@ class Settings {
 
 	protected $context_key;
 
-	public function __construct() {
-		$this->context = isset( $_GET['context'] ) ? sanitize_text_field( wp_unslash( $_GET['context'] ) ) : 'feature';
-		$this->context_key = isset( $_GET['context_key'] ) ? sanitize_text_field( wp_unslash( $_GET['context_key'] ) ) : FeaturePostTitleGeneration::ID;
+	public function __construct( $context = null, $context_key = null ) {
+		$this->context = $context;
+		$this->context_key = $context_key;
 
 		self::$feature_description = [
 			FeaturePostTitleGeneration::ID => [
@@ -36,12 +37,11 @@ class Settings {
 				'provider' => [
 					'field' => 'select',
 					'args' => [
-						'default' => [],
+						'default' => 'openaichatgpt',
 						'label' => __( 'Select a provider', 'classifai' ),
 						'description' => __( 'Choose an AI service provider to generate post titles.', 'classifai' ),
 						'options' => [
 							'openaichatgpt' => __( 'OpenAI ChatGPT', 'classifai' ),
-							'ibm' => __( 'IBM', 'classifai' ),
 						],
 					],
 				],
@@ -76,12 +76,50 @@ class Settings {
 				'provider' => [
 					'field' => 'select',
 					'args' => [
-						'default' => [],
+						'default' => 'openaichatgpt',
 						'label' => __( 'Select a provider', 'classifai' ),
 						'description' => __( 'Choose an AI service provider to generate post excerpts.', 'classifai' ),
 						'options' => [
 							'openaichatgpt' => __( 'OpenAI ChatGPT', 'classifai' ),
-							'ibm' => __( 'IBM', 'classifai' ),
+						],
+					],
+				],
+				'access_control_by_role' => [
+					'field' => 'multi_select',
+					'args' => [
+						'default' => [ 'administrator' ],
+						'label' => __( 'Control access by role', 'classifai' ),
+						'description' => __( 'Limit the use of this feature by user roles.', 'classifai' ),
+						'options' => \Classifai\Admin\SettingsValues::get_user_roles(),
+					],
+				],
+				'access_control_by_post_type' => [
+					'field' => 'multi_select',
+					'args' => [
+						'default' => [],
+						'label' => __( 'Control access by post type', 'classifai' ),
+						'description' => __( 'Limit the use of this feature by post types.', 'classifai' ),
+						'options' => \Classifai\Admin\SettingsValues::get_public_post_types(),
+					],
+				],
+			],
+			FeatureContentResizing::ID => [
+				'status' => [
+					'field' => 'checkbox',
+					'args' => [
+						'default' => 'off',
+						'label' => __( 'Enable', 'classifai' ),
+						'description' => __( 'Enabling this feature will allow you to resize sections of post content.', 'classifai' ),
+					],
+				],
+				'provider' => [
+					'field' => 'select',
+					'args' => [
+						'default' => 'openaichatgpt',
+						'label' => __( 'Select a provider', 'classifai' ),
+						'description' => __( 'Choose an AI service provider to generate post excerpts.', 'classifai' ),
+						'options' => [
+							'openaichatgpt' => __( 'OpenAI ChatGPT', 'classifai' ),
 						],
 					],
 				],
@@ -105,6 +143,17 @@ class Settings {
 				],
 			]
 		];
+
+		if ( 'feature' === $this->context ) {
+			self::$active_description = self::$feature_description;
+		} else if ( 'provider' === $this->context ) {
+			self::$active_description = self::$provider_description;
+		}
+	}
+
+	public function admin_init() {
+		$this->context = isset( $_GET['context'] ) ? sanitize_text_field( wp_unslash( $_GET['context'] ) ) : 'feature';
+		$this->context_key = isset( $_GET['context_key'] ) ? sanitize_text_field( wp_unslash( $_GET['context_key'] ) ) : FeaturePostTitleGeneration::ID;
 
 		self::$provider_description = [];
 
@@ -231,11 +280,15 @@ class Settings {
 		return [
 			FeaturePostTitleGeneration::ID => [
 				'domain' => __( 'Text', 'classifai' ),
-				'label' => __( 'Post title generation', 'classifai' ),
+				'label' => __( 'Post Title Generation', 'classifai' ),
 			],
 			FeatureExcerptGeneration::ID => [
 				'domain' => __( 'Text', 'classifai' ),
-				'label' => __( 'Post excerpt generation', 'classifai' )
+				'label' => __( 'Post Excerpt Generation', 'classifai' )
+			],
+			FeatureContentResizing::ID => [
+				'domain' => __( 'Text', 'classifai' ),
+				'label' => __( 'Content Resizing', 'classifai' )
 			],
 		];
 	}

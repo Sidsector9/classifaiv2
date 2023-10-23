@@ -2,6 +2,19 @@
 
 namespace Classifai\Features;
 
-class FeaturePostTitleGeneration {
+class FeaturePostTitleGeneration extends Feature {
 	public const ID = 'post_title_generation';
+
+	public function generate( ...$args ) {
+		$has_access = $this->has_access();
+
+		if ( is_wp_error( $has_access ) ) {
+			return $has_access;
+		}
+
+		/** @var ChatGPTPostTitleGeneration $provider */
+		// $provider = $this->get_provider_instance();
+
+		// return $provider->get_result( ...$args );
+	}
 }

@@ -9,8 +9,13 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 add_action( 'init', function() {
 	if ( is_admin() ) {
-		new Settings();
+		$settings = new Settings();
+		$settings->admin_init();
 	}
+
+	require_once 'v2/Features/FeatureHelpers.php';
+
+	generate_post_title( 0, [] );
 } );
 
 add_action( 'admin_enqueue_scripts', function() {
