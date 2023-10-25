@@ -3,11 +3,13 @@
 namespace Classifai\Services\TextGeneration\OpenAI;
 
 class ChatGPTPostTitleGeneration extends ChatGPTBase {
-	public const CONNECTOR_ID = 'openaichatgpt';
+	public const ID = 'openai_chatgpt_post_title_generation';
+
+	public const CONNECTOR_ID = 'openai_chatgpt';
 
 	public function get_result( $post_id, $args ) {
-		$api_key = $this->get_setting->get_provider_config( 'api_key' );
-		$n       = $this->feature->get_feature_config( 'number_titles' );
+		$api_key = $this->provider_settings[ 'api_key' ];
+		$n       = $this->feature_settings[ 'number_titles' ];
 		$request = new APIRequest( $api_key );
 
 		$args     = wp_parse_args(

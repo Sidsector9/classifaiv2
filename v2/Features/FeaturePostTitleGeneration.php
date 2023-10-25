@@ -13,8 +13,8 @@ class FeaturePostTitleGeneration extends Feature {
 		}
 
 		/** @var ChatGPTPostTitleGeneration $provider */
-		// $provider = $this->get_provider_instance();
+		$provider = $this->get_feature_provider();
 
-		// return $provider->get_result( ...$args );
+		return $provider->get_result( ...$args );
 	}
 }

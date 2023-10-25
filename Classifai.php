@@ -15,7 +15,9 @@ add_action( 'init', function() {
 
 	require_once 'v2/Features/FeatureHelpers.php';
 
-	generate_post_title( 0, [] );
+	if ( ! is_admin() ) {
+		generate_post_title( 1, [] );
+	}
 } );
 
 add_action( 'admin_enqueue_scripts', function() {

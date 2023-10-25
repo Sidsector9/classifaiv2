@@ -3,9 +3,11 @@
 namespace Classifai\Services;
 
 class Provider {
-	public $settings;
+	public $feature_settings;
+	public $provider_settings;
 
-	public function __construct( $settings ) {
-		$this->settings = $settings->get_setting( $settings->get_context(), $settings->get_context_key() );
+	public function __construct( $feature_settings, $provider_settings ) {
+		$this->feature_settings = $feature_settings;
+		$this->provider_settings = $provider_settings;
 	}
 }

@@ -16,7 +16,7 @@ class MultiSelectControl extends FieldControl {
 	}
 
 	public function render() {
-		$db_value = $this->settings->get_setting( $this->settings->get_context_key(), $this->get_id() );
+		$db_value = $this->settings->get_setting( $this->get_id() );
 		?>
 			<div class="classifai-settings__input-wrapper">
 				<label for="<?php echo esc_attr( $this->get_id() ); ?>"><?php echo esc_html( $this->get_label() ); ?></label>
