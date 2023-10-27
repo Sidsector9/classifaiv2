@@ -6,6 +6,9 @@ use \Classifai\Services\Provider;
 use \Classifai\Services\Tokenizer;
 use \Classifai\Services\Normalizer;
 
+/**
+ * All services that use OpenAI's ChatGPT API extend this class.
+ */
 class ChatGPTBase extends Provider {
 	/**
 	 * OpenAI ChatGPT URL

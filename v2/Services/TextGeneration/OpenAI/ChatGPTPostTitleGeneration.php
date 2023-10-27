@@ -2,6 +2,10 @@
 
 namespace Classifai\Services\TextGeneration\OpenAI;
 
+/**
+ * The service provider class for the Post Title Generation feature
+ * that uses the OpenAI ChatGPT provider.
+ */
 class ChatGPTPostTitleGeneration extends ChatGPTBase {
 	public const ID = 'openai_chatgpt_post_title_generation';
 

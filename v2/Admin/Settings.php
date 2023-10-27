@@ -9,24 +9,80 @@ use \Classifai\Features\AccessControl\Types\AccessControlByRole;
 use \Classifai\Features\AccessControl\Types\AccessControlByPostType;
 use \Classifai\Services\TextGeneration\OpenAI\ChatGPTPostTitleGeneration;
 
+/**
+ * Class Settings
+ *
+ * The wp_options consists of two keys:
+ * - classifai_feature_config Stores the feature settings.
+ * - classifai_provider_config Stores the provider settings.
+ */
 class Settings {
+	/**
+	 * The feature settings options key.
+	 *
+	 * @var string
+	 */
 	const FEATURE_KEY = 'classifai_feature_config';
+
+	/**
+	 * The provider settings options key.
+	 *
+	 * @var string
+	 */
 	const PROVIDER_KEY = 'classifai_provider_config';
 
-	protected static $feature_description;
+	/**
+	 * The feature settings description.
+	 *
+	 * @var array
+	 */
+	protected static $feature_description = [];
 
-	protected static $provider_description;
+	/**
+	 * The provider settings description.
+	 *
+	 * @var array
+	 */
+	protected static $provider_description = [];
 
-	protected static $active_description;
+	/**
+	 * The active settings description depending on the active setting page,
+	 * or depending on how the constructor is called.
+	 *
+	 * @var array
+	 */
+	protected static $active_description = [];
 
+	/**
+	 * The context of the settings page.
+	 * Either 'feature' or 'provider'.
+	 *
+	 * @var string
+	 */
 	protected $context;
 
+	/**
+	 * The context key of the settings page.
+	 *
+	 * For example, 'post_title_generation' if the context is feature,
+	 * or 'openai_chatgpt' if the context is provider.
+	 */
 	protected $context_key;
 
+	/**
+	 * Settings constructor.
+	 *
+	 * @param string $context
+	 * @param string $context_key
+	 */
 	public function __construct( $context = null, $context_key = null ) {
 		$this->context = $context;
 		$this->context_key = $context_key;
 
+		/**
+		 * @todo: Move this to a separate file to declutter.
+		 * @todo: Add a key called provider_fields that are visible only when the provider is selected.
+		 */
 		self::$feature_description = [
 			FeaturePostTitleGeneration::ID => [
 				'status' => [
@@ -175,6 +231,11 @@ class Settings {
 		$this->set_active_description();
 	}
 
+	/**
+	 * Sets the context outside of the admin screen where $this->context will be null.
+	 *
+	 * @param string|null $context
+	 */
 	private function set_active_description( $context = null ) {
 		$__context = $context ? $context : $this->context;
 
@@ -185,6 +246,10 @@ class Settings {
 		}
 	}
 
+	/**
+	 * Initializes the settings page.
+	 * Should be called in the admin page.
+	 */
 	public function admin_init() {
 		$this->context = isset( $_GET['context'] ) ? sanitize_text_field( wp_unslash( $_GET['context'] ) ) : 'feature';
 		$this->context_key = isset( $_GET['context_key'] ) ? sanitize_text_field( wp_unslash( $_GET['context_key'] ) ) : FeaturePostTitleGeneration::ID;
@@ -195,19 +260,53 @@ class Settings {
 		add_action( 'admin_menu', [ $this, 'register_menu_page' ] );
 	}
 
+	/**
+	 * Registers the settings.
+	 */
 	public function register_settings() {
 		register_setting( self::FEATURE_KEY, self::FEATURE_KEY, [ 'sanitize_callback' => [ $this, 'sanitize_callback' ] ] );
 		register_setting( self::PROVIDER_KEY, self::PROVIDER_KEY, [ 'sanitize_callback' => [ $this, 'sanitize_callback' ] ] );
 	}
 
+	/**
+	 * Registers the menu page.
+	 */
+	public function register_menu_page() {
+		add_submenu_page(
+			'tools.php',
+			'ClassifAI Settings',
+			'ClassifAI Settings',
+			'manage_options',
+			'classifai',
+			[ $this, 'render_settings_page' ]
+		);
+	}
+
+	/**
+	 * Returns the current context of the settings page.
+	 *
+	 * @return string
+	 */
 	public function get_context() {
 		return $this->context;
 	}
 
+	/**
+	 * Returns the current context key of the settings page.
+	 *
+	 * @return string
+	 */
 	public function get_context_key() {
 		return $this->context_key;
 	}
 
+	/**
+	 * Runs when the settings are saved.
+	 * Calls the sanitize_setting of each FieldControl on the page.
+	 *
+	 * @param array $data
+	 * @return array
+	 */
 	public function sanitize_callback( $data ) {
 		$context     = isset( $_POST['context'] ) ? sanitize_text_field( wp_unslash( $_POST['context'] ) ) : self::FEATURE_KEY;
 		$context_key = isset( $_POST['context_key'] ) ? sanitize_text_field( wp_unslash( $_POST['context_key'] ) ) : FeaturePostTitleGeneration::ID;
@@ -233,17 +332,14 @@ class Settings {
 		return array_merge( $options, $data );
 	}
 
-	public function register_menu_page() {
-		add_submenu_page(
-			'tools.php',
-			'ClassifAI Settings',
-			'ClassifAI Settings',
-			'manage_options',
-			'classifai',
-			[ $this, 'render_settings_page' ]
-		);
-	}
-
+	/**
+	 * Returns the FieldControl class based on the field type.
+	 * This array should be updated when a new FieldControl is added.
+	 *
+	 * @todo: Add a filter hook to add new FieldControls.
+	 *
+	 * @return array
+	 */
 	public function get_field_class( $field ) {
 		$field_to_class = [
 			'checkbox' => '\Classifai\Admin\Fields\CheckboxControl',
@@ -257,7 +353,8 @@ class Settings {
 	}
 
 	/**
-	 * @param $key 'status'
+	 * Returns all the settings of a context_key, eg; the `post_title_generation` when the $key is null.
+	 * When the $key is set, only the value of the key under `post_title_generation` is returned.
 	 */
 	public function get_setting( $key = null ) {
 		$option_name = $this->get_active_option_name();
@@ -274,6 +371,9 @@ class Settings {
 			: self::$active_description[ $this->context_key ][ $key ]['args']['default'];
 	}
 
+	/**
+	 * Returns the default settings of a context.
+	 */
 	public function get_settings_defaults() {
 		$default_settings = [];
 
@@ -286,6 +386,11 @@ class Settings {
 		return $default_settings;
 	}
 
+	/**
+	 * Merges the settings with the defaults.
+	 *
+	 * @return array
+	 */
 	function merge_arrays( $source, $defaults, $context_key ) {
 		if ( ! isset( $source[ $context_key ] ) ) {
 			$source[ $context_key ] = $defaults[ $context_key ];
@@ -301,6 +406,12 @@ class Settings {
 		return $source;
 	}
 
+	/**
+	 * Convenience method to get the active option name depending on the current context.
+	 * Either `classifai_feature_config` or `classifai_provider_config`.
+	 *
+	 * @return string
+	 */
 	public function get_active_option_name() {
 		if ( 'feature' === $this->context ) {
 			return self::FEATURE_KEY;
@@ -311,7 +422,13 @@ class Settings {
 		return self::FEATURE_KEY;
 	}
 
-	public static function get_feature_columns() {
+	/**
+	 * Returns the feature columns.
+	 * Used to render the feature title column.
+	 *
+	 * @return array
+	 */
+	private static function get_feature_columns() {
 		return [
 			[
 				'header' => __( 'Text generation', 'classifai' ),
@@ -328,7 +445,13 @@ class Settings {
 		];
 	}
 
-	public static function get_provider_columns() {
+	/**
+	 * Returns the provider columns.
+	 * Used to render the provider title column.
+	 *
+	 * @return array
+	 */
+	private static function get_provider_columns() {
 		return [
 			[
 				'header' => __( 'OpenAI', 'classifai' ),
@@ -338,11 +461,17 @@ class Settings {
 			],
 			[
 				'header' => __( 'Microsoft', 'classifai' ),
-				'providers' => []
+				'providers' => [
+					'microsoft_azure_vision' => __( 'Azure AI Vision', 'classifai' ),
+					'microsoft_azure_speech' => __( 'Azure AI Speech', 'classifai' ),
+				]
 			]
 		];
 	}
 
+	/**
+	 * Renders the settings page.
+	 */
 	public function render_settings_page() {
 		?>
 		<h1>ClassifAI</h1>
