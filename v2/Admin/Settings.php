@@ -308,7 +308,7 @@ class Settings {
 	 * @return array
 	 */
 	public function sanitize_callback( $data ) {
-		$context     = isset( $_POST['context'] ) ? sanitize_text_field( wp_unslash( $_POST['context'] ) ) : self::FEATURE_KEY;
+		$context     = isset( $_POST['context'] ) ? sanitize_text_field( wp_unslash( $_POST['context'] ) ) : 'feature';
 		$context_key = isset( $_POST['context_key'] ) ? sanitize_text_field( wp_unslash( $_POST['context_key'] ) ) : FeaturePostTitleGeneration::ID;
 
 		$this->set_active_description( $context );
