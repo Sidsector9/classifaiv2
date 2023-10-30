@@ -5,6 +5,9 @@
 
 use \Classifai\Admin\Settings;
 
+define( 'CLASSIFAI_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'CLASSIFAI_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 add_action( 'init', function() {
@@ -18,10 +21,6 @@ add_action( 'init', function() {
 	if ( ! is_admin() ) {
 		generate_post_title( 1, [] );
 	}
-} );
-
-add_action( 'admin_enqueue_scripts', function() {
-	wp_enqueue_style( 'classifai-admin', plugin_dir_url( __FILE__ ) . 'build/configstyle.css', [], '1.0.0' );
 } );
 
 add_action( 'admin_footer', function() {

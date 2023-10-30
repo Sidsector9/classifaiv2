@@ -5,9 +5,9 @@ namespace Classifai\Admin;
 use \Classifai\Features\FeaturePostTitleGeneration;
 use \Classifai\Features\FeatureExcerptGeneration;
 use \Classifai\Features\FeatureContentResizing;
-use \Classifai\Features\AccessControl\Types\AccessControlByRole;
-use \Classifai\Features\AccessControl\Types\AccessControlByPostType;
 use \Classifai\Services\TextGeneration\OpenAI\ChatGPTPostTitleGeneration;
+use \Classifai\Features\Descriptor as FeatureDescriptor;
+use \Classifai\Services\Descriptor as ProviderDescriptor;
 
 /**
  * Class Settings
@@ -83,150 +83,8 @@ class Settings {
 		 * @todo: Move this to a separate file to declutter.
 		 * @todo: Add a key called provider_fields that are visible only when the provider is selected.
 		 */
-		self::$feature_description = [
-			FeaturePostTitleGeneration::ID => [
-				'status' => [
-					'field' => 'checkbox',
-					'args' => [
-						'default' => 'off',
-						'label' => __( 'Enable', 'classifai' ),
-						'description' => __( 'Enabling this feature will generate post titles based on the content of the post.', 'classifai' ),
-					],
-				],
-				'provider' => [
-					'field' => 'select',
-					'args' => [
-						'default' => ChatGPTPostTitleGeneration::ID,
-						'label' => __( 'Select a provider', 'classifai' ),
-						'description' => __( 'Choose an AI service provider to generate post titles.', 'classifai' ),
-						'options' => [
-							ChatGPTPostTitleGeneration::ID => __( 'OpenAI ChatGPT', 'classifai' ),
-						],
-					],
-				],
-				AccessControlByRole::ID => [
-					'field' => 'multi_select',
-					'args' => [
-						'default' => [ 'administrator' ],
-						'label' => __( 'Control access by role', 'classifai' ),
-						'description' => __( 'Limit the use of this feature by user roles.', 'classifai' ),
-						'options' => \Classifai\Admin\SettingsValues::get_user_roles(),
-					],
-				],
-				AccessControlByPostType::ID => [
-					'field' => 'multi_select',
-					'args' => [
-						'default' => [],
-						'label' => __( 'Control access by post type', 'classifai' ),
-						'description' => __( 'Limit the use of this feature by post types.', 'classifai' ),
-						'options' => \Classifai\Admin\SettingsValues::get_public_post_types(),
-					],
-				],
-				'number_titles' => [
-					'field' => 'number',
-					'args' => [
-						'default' => 1,
-						'label' => __( 'Number of titles', 'classifai' ),
-						'description' => __( 'Number of titles that will be generated in one request.', 'classifai' ),
-						'options' => [
-							'min' => 1,
-							'step' => 1,
-						],
-					],
-				],
-			],
-			FeatureExcerptGeneration::ID => [
-				'status' => [
-					'field' => 'checkbox',
-					'args' => [
-						'default' => 'off',
-						'label' => __( 'Enable', 'classifai' ),
-						'description' => __( 'Enabling this feature will generate post excerpt based on the content of the post.', 'classifai' ),
-					],
-				],
-				'provider' => [
-					'field' => 'select',
-					'args' => [
-						'default' => 'openaichatgpt',
-						'label' => __( 'Select a provider', 'classifai' ),
-						'description' => __( 'Choose an AI service provider to generate post excerpts.', 'classifai' ),
-						'options' => [
-							'openaichatgpt' => __( 'OpenAI ChatGPT', 'classifai' ),
-						],
-					],
-				],
-				'access_control_by_role' => [
-					'field' => 'multi_select',
-					'args' => [
-						'default' => [ 'administrator' ],
-						'label' => __( 'Control access by role', 'classifai' ),
-						'description' => __( 'Limit the use of this feature by user roles.', 'classifai' ),
-						'options' => \Classifai\Admin\SettingsValues::get_user_roles(),
-					],
-				],
-				'access_control_by_post_type' => [
-					'field' => 'multi_select',
-					'args' => [
-						'default' => [],
-						'label' => __( 'Control access by post type', 'classifai' ),
-						'description' => __( 'Limit the use of this feature by post types.', 'classifai' ),
-						'options' => \Classifai\Admin\SettingsValues::get_public_post_types(),
-					],
-				],
-			],
-			FeatureContentResizing::ID => [
-				'status' => [
-					'field' => 'checkbox',
-					'args' => [
-						'default' => 'off',
-						'label' => __( 'Enable', 'classifai' ),
-						'description' => __( 'Enabling this feature will allow you to resize sections of post content.', 'classifai' ),
-					],
-				],
-				'provider' => [
-					'field' => 'select',
-					'args' => [
-						'default' => 'openaichatgpt',
-						'label' => __( 'Select a provider', 'classifai' ),
-						'description' => __( 'Choose an AI service provider to generate post excerpts.', 'classifai' ),
-						'options' => [
-							'openaichatgpt' => __( 'OpenAI ChatGPT', 'classifai' ),
-						],
-					],
-				],
-				AccessControlByRole::ID => [
-					'field' => 'multi_select',
-					'args' => [
-						'default' => [ 'administrator' ],
-						'label' => __( 'Control access by role', 'classifai' ),
-						'description' => __( 'Limit the use of this feature by user roles.', 'classifai' ),
-						'options' => \Classifai\Admin\SettingsValues::get_user_roles(),
-					],
-				],
-				AccessControlByPostType::ID => [
-					'field' => 'multi_select',
-					'args' => [
-						'default' => [],
-						'label' => __( 'Control access by post type', 'classifai' ),
-						'description' => __( 'Limit the use of this feature by post types.', 'classifai' ),
-						'options' => \Classifai\Admin\SettingsValues::get_public_post_types(),
-					],
-				],
-			]
-		];
-
-		self::$provider_description = [
-			ChatGPTPostTitleGeneration::CONNECTOR_ID => [
-				'api_key' => [
-					'field' => 'text',
-					'args' => [
-						'default' => '',
-						'label' => __( 'API Key', 'classifai' ),
-						'description' => __( 'API Key for ChatGPT | DALL·E', 'classifai' ),
-					],
-				],
-			]
-		];
+		self::$feature_description = FeatureDescriptor::get_descriptor();
+		self::$provider_description = ProviderDescriptor::get_descriptor();
 
 		$this->set_active_description();
 	}
@@ -258,6 +116,7 @@ class Settings {
 
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
 		add_action( 'admin_menu', [ $this, 'register_menu_page' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 	}
 
 	/**
@@ -282,6 +141,10 @@ class Settings {
 		);
 	}
 
+	public function enqueue_scripts() {
+		wp_enqueue_style( 'classifai-admin', CLASSIFAI_PLUGIN_URL . 'build/configstyle.css', [], '1.0.0' );
+	}
+
 	/**
 	 * Returns the current context of the settings page.
 	 *
@@ -302,7 +165,7 @@ class Settings {
 
 	/**
 	 * Runs when the settings are saved.
-	 * Calls the sanitize_setting of each FieldControl on the page.
+	 * Calls the sanitize_setting of each FieldControl on the current page.
 	 *
 	 * @param array $data
 	 * @return array
@@ -319,15 +182,7 @@ class Settings {
 			$data[ $context_key ][ $setting_control->get_id() ] = $setting_control->sanitize_setting( $data[ $context_key ][ $setting_control->get_id() ] );
 		}
 
-		$option_name = '';
-
-		if ( 'feature' === $context ) {
-			$option_name = self::FEATURE_KEY;
-		} else if ( 'provider' === $context ) {
-			$option_name = self::PROVIDER_KEY;
-		}
-
-		$options = get_option( $option_name, [] );
+		$options = get_option( $this->get_active_context_option_key( $context ), [] );
 
 		return array_merge( $options, $data );
 	}
@@ -341,13 +196,16 @@ class Settings {
 	 * @return array
 	 */
 	public function get_field_class( $field ) {
-		$field_to_class = [
-			'checkbox' => '\Classifai\Admin\Fields\CheckboxControl',
-			'select' => '\Classifai\Admin\Fields\SelectControl',
-			'multi_select' => '\Classifai\Admin\Fields\MultiSelectControl',
-			'number' => '\Classifai\Admin\Fields\NumberControl',
-			'text' => '\Classifai\Admin\Fields\TextControl',
-		];
+		$field_to_class = apply_filters(
+			'classifai_field_to_class_mapping',
+			[
+				'checkbox' => '\Classifai\Admin\Fields\CheckboxControl',
+				'select' => '\Classifai\Admin\Fields\SelectControl',
+				'multi_select' => '\Classifai\Admin\Fields\MultiSelectControl',
+				'number' => '\Classifai\Admin\Fields\NumberControl',
+				'text' => '\Classifai\Admin\Fields\TextControl',
+			]
+		);
 
 		return $field_to_class[ $field ];
 	}
@@ -357,7 +215,7 @@ class Settings {
 	 * When the $key is set, only the value of the key under `post_title_generation` is returned.
 	 */
 	public function get_setting( $key = null ) {
-		$option_name = $this->get_active_option_name();
+		$option_name = $this->get_active_context_option_key();
 		$settings = get_option( $option_name, [] );
 		$defaults = $this->get_settings_defaults();
 		$merged   = $this->merge_arrays( $settings, $defaults, $this->context_key );
@@ -412,14 +270,19 @@ class Settings {
 	 *
 	 * @return string
 	 */
-	public function get_active_option_name() {
-		if ( 'feature' === $this->context ) {
-			return self::FEATURE_KEY;
-		} else if ( 'provider' === $this->context ) {
-			return self::PROVIDER_KEY;
-		}
+	private function get_active_context_option_key( $context = null ) {
+		$__context = $context ? $context : $this->context;
 
-		return self::FEATURE_KEY;
+		switch ( $__context ) {
+			case 'feature':
+				return self::FEATURE_KEY;
+
+			case 'provider':
+				return self::PROVIDER_KEY;
+
+			default:
+				return self::FEATURE_KEY;
+		}
 	}
 
 	/**
@@ -543,7 +406,7 @@ class Settings {
 						<input type="hidden" name="context" value="<?php echo esc_attr( $this->context ); ?>">
 						<input type="hidden" name="context_key" value="<?php echo esc_attr( $this->context_key ); ?>">
 						<?php
-							settings_fields( $this->get_active_option_name() );
+							settings_fields( $this->get_active_context_option_key() );
 							submit_button();
 						?>
 					</div>
